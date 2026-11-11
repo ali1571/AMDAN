@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { timeAgo } from "../lib/TimeAgo";
 
 export default function SalaryFeed() {
   const [salaries, setSalaries] = useState<any[]>([]);
@@ -56,12 +57,17 @@ export default function SalaryFeed() {
               key={salary.id} 
               className="group flex flex-col justify-between border-b border-slate-200 py-5 transition-colors hover:bg-white/60 sm:flex-row sm:items-center sm:px-4 -mx-4 sm:mx-0"
             >
-              {/* Role & Company */}
+              {/* Role, Company, & Relative Time */}
               <div className="flex flex-col px-4 sm:w-1/3 sm:px-0">
                 <span className="text-base font-medium text-slate-900">{salary.role}</span>
-                <span className="mt-0.5 text-xs font-light tracking-wide text-slate-500">
-                  {salary.company_name || "Confidential"}
-                </span>
+                <div className="mt-0.5 flex items-center gap-2 text-xs font-light tracking-wide text-slate-500">
+                  <span>{salary.company_name || "Confidential"}</span>
+                  <span>•</span>
+                  {/* Live Relative Time Display */}
+                  <span className="font-mono text-[11px] text-emerald-600/80">
+                    {timeAgo(salary.created_at)}
+                  </span>
+                </div>
               </div>
 
               {/* Specs: Bumped up YOE size */}

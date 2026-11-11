@@ -1,3 +1,5 @@
+import SubmissionCounter from "./SubmissionCounter";
+
 export default function Hero() {
   return (
     <div className="relative mx-auto max-w-3xl px-4 pt-16 pb-8 text-center sm:px-6 lg:px-8">
@@ -9,6 +11,8 @@ export default function Hero() {
       <p className="mx-auto mt-6 max-w-xl text-lg text-slate-600 leading-relaxed font-light">
         Anonymous tech salary drops in Pakistan. Share your receipt, check the market, and get what you're actually owed.
       </p>
+
+      <SubmissionCounter />
     </div>
   );
 }
