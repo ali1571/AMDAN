@@ -24,7 +24,7 @@ export default function Footer() {
         </div>
         
         <p className="text-xs text-slate-400">
-          Built by Ali (QWERTS) <span className="font-playfair italic text-emerald-600 lowercase tracking-normal">for the culture</span>. &copy; {new Date().getFullYear()}
+          Built by Ali (QWERTS) <span className="font-playfair italic text-emerald-600 lowercase tracking-normal">FOR THE CULTURE</span>. &copy; 2026
         </p>
       </div>
     </footer>
