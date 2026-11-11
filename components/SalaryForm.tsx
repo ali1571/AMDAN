@@ -74,6 +74,9 @@ export default function SalaryForm() {
               <option value="QA Engineer">QA Engineer</option>
               <option value="Product Manager">Product Manager</option>
               <option value="UI/UX Designer">UI/UX Designer</option>
+              <option value="System Administrator">UI/UX Designer</option>
+              <option value="IT Support">UI/UX Designer</option>
+              <option value="Network Engineer">UI/UX Designer</option>
             </select>
           </div>
           <div>

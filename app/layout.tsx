@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins, Playfair_Display, Oswald } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
+import Navbar from "@/components/Navbar";
+import Banner from "@/components/Banner"; // Import the banner
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -31,11 +33,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  // Moving variables to HTML fixes the Tailwind v4 fallback bug
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${poppins.variable} ${playfair.variable} ${oswald.variable}`}>
-      <body className="font-sans bg-[#f8fafc] text-slate-900 antialiased">
+    <html lang="en">
+      <body className={`${poppins.variable} font-sans antialiased`}>
+        
+        <Banner /> {/* <-- Drops in right below the nav, full width */}
         {children}
         <Analytics />
       </body>

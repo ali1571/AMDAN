@@ -12,7 +12,7 @@
 }
 
 .animate-ticker {
-  animation: ticker 30s linear infinite;
+  animation: ticker 220s linear infinite;
 }
 
 .animate-ticker:hover {
