@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Playfair_Display, Oswald } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -26,6 +27,8 @@ export const metadata: Metadata = {
   description: "Anonymous tech salary aggregator for Pakistan.",
 };
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -34,6 +37,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${playfair.variable} ${oswald.variable}`}>
       <body className="font-sans bg-[#f8fafc] text-slate-900 antialiased">
         {children}
+        <Analytics />
       </body>
     </html>
   );
