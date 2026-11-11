@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Amdan.
 
-## Getting Started
+An anonymous, open database for tech salaries in Pakistan. 
 
-First, run the development server:
+**[Live Site](https://amdanpk.vercel.app)** 
+## The What
+A minimal, brutally honest ledger of tech compensation. 
+* **Anonymous Data Ingestion:** Drop your receipt without signing up.
+* **The Market Gap:** Live median calculations contrasting local PKR salaries against converted remote USD/CAD salaries.
+* **The Ledger:** A live, auto-scrolling ticker and a flat, anti-corporate receipt feed showing exact specs (YOE, work model, city, currency).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* ## The How (Technical Architecture)
+Amdan is built as a lightweight, serverless application prioritizing speed, minimal bloat, and strict data governance.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Core Stack
+* **Framework:** Next.js (App Router)
+* **Styling:** Tailwind CSS (v4)
+* **Database:** Supabase (PostgreSQL)
+* **Deployment:** Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Data Integrity & Security
+* **Row-Level Security (RLS):** The `salary_records` table on Supabase is strictly locked down. Anonymous users only have `INSERT` and `SELECT` privileges.
+* **Database-Native Aggregation:** Medians are not calculated on the client. A custom Postgres RPC function (`percentile_cont(0.5)`) computes the exact middle value dynamically based on role filters, keeping the frontend thin.
+* **Edge Rate-Limiting:** A Next.js Server Action acts as a proxy between the client and Supabase, intercepting requests and logging `x-forwarded-for` IPs into an in-memory Map to enforce a strict 5-minute cooldown per IP, blocking automated spam scripts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Design System
+Anti-corporate, financial-paper aesthetic. 
+* **Typography:** Oswald (impact metrics), Playfair Display (italic accents), and monospace/sans mixes for raw data.
+* **UI Principles:** 1px thin borders, colored pulsing status dots, and complete removal of heavy dashboard blocks in favor of a flat ledger layout.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## The Why
+The Pakistani tech market operates in the dark. Engineers, PMs, and designers consistently get lowballed because compensation data is gatekept by HR departments and outdated Glassdoor averages. Averages are mathematically flawed for salaries—one remote worker making $5,000 USD skews the entire local aggregate. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Amdan exists to expose actual market rates. It relies purely on medians and separates local economies from remote/global economies to give the tech community real leverage in their next negotiation.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+---
+Built by Ali (QWERTS) for the culture.
