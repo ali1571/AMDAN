@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Poppins, Playfair_Display, Oswald } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
-import Navbar from "@/components/Navbar";
 import Banner from "@/components/Banner"; // Import the banner
 
 const poppins = Poppins({

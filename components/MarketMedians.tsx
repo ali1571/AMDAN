@@ -10,17 +10,21 @@ export default function MarketMedians() {
   const [loading, setLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState("All");
 
-  useEffect(() => {
+useEffect(() => {
     async function fetchMedians() {
       setLoading(true);
-      // Pass the selected role to our new SQL function (null if "All")
       const { data, error } = await supabase.rpc("get_market_medians", {
         role_filter: selectedRole === "All" ? null : selectedRole
       });
       
-      if (!error && data) {
-        setMedians({ local: data.local_median, remote: data.remote_median });
+      // Update this if-block to check for the array and grab the first item [0]
+      if (!error && data && data.length > 0) {
+        setMedians({ 
+          local: data[0].local_median, 
+          remote: data[0].remote_median 
+        });
       }
+      
       setLoading(false);
     }
     fetchMedians();
@@ -37,22 +41,22 @@ export default function MarketMedians() {
       
       {/* Interactive Role Selector */}
       <div className="mb-6 flex w-full overflow-x-auto pb-2 scrollbar-hide">
-        <div className="flex gap-2">
-          {ROLES.map((role) => (
-            <button
-              key={role}
-              onClick={() => setSelectedRole(role)}
-              className={`whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
-                selectedRole === role
-                  ? "bg-slate-900 text-white shadow-sm"
-                  : "bg-white text-slate-500 border border-slate-200 hover:border-slate-400 hover:text-slate-800"
-              }`}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
+      <div className="flex gap-2 min-w-max"> {/* Add min-w-max so items don't squish and can scroll horizontally */}
+        {ROLES.map((role) => (
+          <button
+            key={role}
+            onClick={() => setSelectedRole(role)}
+            className={`whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
+              selectedRole === role
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-white text-slate-500 border border-slate-200 hover:border-slate-400 hover:text-slate-800"
+            }`}
+          >
+            {role}
+          </button>
+        ))}
       </div>
+    </div>
 
       <div className={`flex w-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-transparent sm:flex-row transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
         
