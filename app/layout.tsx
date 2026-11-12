@@ -5,23 +5,24 @@ import { Analytics } from "@vercel/analytics/next"
 import Banner from "@/components/Banner"; // Import the banner
 
 const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-poppins",
+  variable: "--next-font-poppins",
 });
 
 const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--next-font-playfair", // Renamed to avoid self-reference loop
 });
 
 const oswald = Oswald({
   weight: ["500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-oswald",
+  variable: "--next-font-oswald", // Renamed to avoid self-reference loop
 });
+
 
 export const metadata: Metadata = {
   title: "Amdan | Tech Salary Transparency",
@@ -36,10 +37,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased`}>
-        
-        <Banner /> {/* <-- Drops in right below the nav, full width */}
+    <html
+      lang="en"
+      className={`${poppins.variable} ${playfair.variable} ${oswald.variable}`}
+    >
+      <body className="font-sans antialiased">
+        <Banner />
         {children}
         <Analytics />
       </body>

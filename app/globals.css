@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-playfair: var(--font-playfair), serif;
-  --font-oswald: var(--font-oswald), sans-serif;
+@theme inline {
+  --font-sans: var(--next-font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-playfair: var(--next-font-playfair), serif;
+  --font-oswald: var(--next-font-oswald), sans-serif;
 }
+
 
 @keyframes ticker {
   0% { transform: translateX(0); }
