@@ -31,7 +31,7 @@ export default function SubmissionCounter() {
       
       {/* Added a subtle drop shadow to lift it off the background cleanly */}
       <p className="font-sans text-xs font-light text-slate-500 tracking-wide drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-        Tracking <span className="font-oswald text-base font-medium tracking-tight text-emerald-600 px-1">{count}</span> anonymous salary receipts across Pakistan.
+        Tracked <span className="font-oswald text-base font-medium tracking-tight text-emerald-600 px-1">{count}</span> anonymous salary receipts across Pakistan.
       </p>
     </div>
   );

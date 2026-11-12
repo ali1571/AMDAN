@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-const ROLES = ["All", "Backend Engineer", "Frontend Engineer", "Fullstack Engineer", "Mobile Engineer", "Product Manager", "UI/UX Designer"];
+const ROLES = ["All", "Backend Engineer", "Frontend Engineer", "Fullstack Engineer", "Mobile Engineer", "Product Manager", "UI/UX Designer", "System Administrator", "IT Support", "Network Engineer"];
 
 export default function MarketMedians() {
   const [medians, setMedians] = useState({ local: 0, remote: 0 });

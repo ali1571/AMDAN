@@ -1,4 +1,5 @@
 import SubmissionCounter from "./SubmissionCounter";
+import CompanySpot from "./CompanySpot";
 
 export default function Hero() {
   return (
@@ -13,6 +14,8 @@ export default function Hero() {
       </p>
 
       <SubmissionCounter />
+      <CompanySpot />
+
     </div>
   );
 }
