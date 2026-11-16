@@ -1,25 +1,23 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import SalaryForm from "@/components/SalaryForm";
-import LiveTicker from "@/components/LiveTicker"; // <-- Ticker spins right here
-import MarketMedians from "@/components/MarketMedians"; // <-- Interactive boxes
-import SalaryFeed from "@/components/SalaryFeed"; // <-- The receipt ledger
+import LiveTicker from "@/components/LiveTicker";
+import SalaryDashboard from "@/components/SalaryDashboard";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8fafc]">
       <Navbar />
-      <Hero />
-      
+      <Hero industry="Tech" />
+
       <div className="relative z-10 -mt-2">
-        <SalaryForm />
+        <SalaryForm industry="Tech" />
       </div>
 
-      <LiveTicker />
-      <MarketMedians /> 
-      <SalaryFeed />
-      
+      <LiveTicker industry="Tech" />
+      <SalaryDashboard industry="Tech" />
+
       <Footer />
     </main>
   );

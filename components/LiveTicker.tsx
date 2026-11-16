@@ -3,15 +3,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-export default function LiveTicker() {
+export default function LiveTicker({
+  industry = "Tech",
+}: {
+  industry?: "Tech" | "Business";
+}) {
   const [salaries, setSalaries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchSalaries() {
+      setLoading(true);
       const { data, error } = await supabase
         .from("salary_records")
         .select("role, salary_amount, currency, yoe")
+        .eq("industry", industry)
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -21,18 +27,18 @@ export default function LiveTicker() {
       setLoading(false);
     }
     fetchSalaries();
-  }, []);
+  }, [industry]);
 
   // Don't render the ticker area at all if there's no data yet
   if (loading || salaries.length === 0) return null;
 
-  const formatMoney = (amount: number) => new Intl.NumberFormat('en-US').format(amount);
+  const formatMoney = (amount: number) => new Intl.NumberFormat("en-US").format(amount);
 
   return (
     <div className="relative mt-12 flex w-full overflow-hidden border-y border-slate-200 bg-white/40 py-3 shadow-sm backdrop-blur-sm">
       {/* Left Fade */}
       <div className="absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-[#f8fafc] to-transparent"></div>
-      
+
       {/* Scrolling Content */}
       <div className="animate-ticker flex w-max min-w-full shrink-0 items-center gap-8 px-4">
         {[...salaries, ...salaries].map((salary, i) => (
@@ -47,7 +53,7 @@ export default function LiveTicker() {
           </div>
         ))}
       </div>
-      
+
       {/* Right Fade */}
       <div className="absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-[#f8fafc] to-transparent"></div>
     </div>

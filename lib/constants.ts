@@ -5,14 +5,35 @@ export const VALID_ROLES = [
   "Mobile Engineer",
   "Product Manager",
   "UI/UX Designer",
-  "Data Scientist",
-  "DevOps Engineer",
+  "Data Scientist/Engineer",
+  "DevOps/SRE",
   "QA Engineer",
   "System Administrator", // New
   "IT Support",           // New
   "Network Engineer",     // New
 ] as const;
 
-export const VALID_CURRENCIES = ["PKR", "USD"] as const;
+
+export const BIZ_ROLES = [
+  "Business Development",
+  "Sales Executive",
+  "Account Manager",
+  "HR / Recruiter",
+  "Finance / Accounting",
+  "Financial Analyst",
+  "Tax / Audit",
+  "Supply Chain",
+  "Operations Manager",
+  "Project Manager",
+  "Digital Marketing",
+  "Brand Manager",
+  "Business Analyst",
+  "Customer Support",
+  "Virtual Assistant",
+] as const;
+
+export const VALID_CURRENCIES = ["PKR", "USD", "CAD", "EUR", "GBP", "AUD"] as const;
 export const VALID_WORK_MODELS = ["On-site", "Hybrid", "Remote"] as const;
-export const VALID_CITIES = ["Lahore", "Karachi", "Islamabad", "Faisalabad", "Rawalpindi", "Remote"] as const;
+export const VALID_CITIES = ["Lahore", "Karachi", "Islamabad", "Faisalabad", "Rawalpindi", "Peshawar", "Remote"] as const;
+export const VALID_INDUSTRIES = ["Tech", "Business"] as const;
+export type IndustryVertical = (typeof VALID_INDUSTRIES)[number];

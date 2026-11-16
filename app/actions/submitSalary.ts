@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { supabase } from "../../lib/supabase";
-import { VALID_ROLES, VALID_CURRENCIES, VALID_WORK_MODELS, VALID_CITIES } from "../../lib/constants";
+import { VALID_INDUSTRIES, VALID_ROLES, BIZ_ROLES, VALID_CURRENCIES, VALID_WORK_MODELS, VALID_CITIES } from "../../lib/constants";
 
 const rateLimitMap = new Map<string, number>();
 
@@ -20,8 +20,16 @@ export async function submitSalaryAction(formData: any) {
     }
   }
 
+
   // --- STRICT SERVER-SIDE VALIDATION ---
-  if (!VALID_ROLES.includes(formData.role)) {
+  const industry = formData.industry || "Tech";
+  if (!VALID_INDUSTRIES.includes(industry)){
+    return {success : false, error :"invalid_indsutry"};
+  }
+
+  const allowedRoles : readonly string[] =
+  industry === "Business" ? BIZ_ROLES : VALID_ROLES;
+  if (!allowedRoles.includes(formData.role)) {
     return { success: false, error: "invalid_role" };
   }
   if (!VALID_CURRENCIES.includes(formData.currency)) {

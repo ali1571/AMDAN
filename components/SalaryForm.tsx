@@ -1,16 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { submitSalaryAction } from "../app/actions/submitSalary";
 import { supabase } from "../lib/supabase";
+import {
+  IndustryVertical,
+  VALID_ROLES,
+  BIZ_ROLES,
+  VALID_CURRENCIES,
+  VALID_WORK_MODELS,
+  VALID_CITIES,
+} from "../lib/constants";
 
-export default function SalaryForm({ currentMedians = {} }: { currentMedians?: Record<string, number> }) {
+export default function SalaryForm({
+  industry = "Tech",
+  currentMedians = {},
+}: {
+  industry?: "Tech" | "Business";
+  currentMedians?: Record<string, number>;
+}) {
+  const isBiz = industry === "Business";
+  let rolesList;
+
+  if (isBiz) {
+    rolesList = BIZ_ROLES;
+  } else {
+    rolesList = VALID_ROLES;
+  }
+
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [submittedData, setSubmittedData] = useState<{ role: string; salary: number; median: number } | null>(null);
+  const [errorMsg, setErrorMsg] = useState("Something went wrong. Try again.");
 
   const [formData, setFormData] = useState({
-    industry: "Tech",
-    role: "Backend Engineer",
+    role: rolesList[0] as string,
     yoe: "",
     salary_amount: "",
     currency: "PKR",
@@ -24,31 +48,32 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
     setLoading(true);
     setStatus("idle");
 
-    const { error } = await supabase.from("salary_records").insert([
-      {
-        industry: formData.industry,
-        role: formData.role,
-        yoe: parseFloat(formData.yoe),
-        salary_amount: parseInt(formData.salary_amount),
-        currency: formData.currency,
-        work_model: formData.work_model,
-        city: formData.city,
-        company_name: formData.company_name || null,
-      },
-    ]);
-
-    if (error) {
-      console.error(error);
+    const res = await submitSalaryAction({
+      ...formData,
+      industry,
+    })
+    if (!res.success) {
+      if (res.error === "chill") {
+        setErrorMsg("Whoa, slow down. Wait 5 minutes before dropping another receipt.");
+      } else {
+        setErrorMsg(`Error: ${res.error}`);
+      }
       setStatus("error");
-    } else {
-      // Grab the live median for their role. Fallback to 175k if the map is empty.
-      const activeMedian = currentMedians[formData.role] || 175000;
+    
+    } else { 
+      const { data: medianData } = await supabase.rpc("get_market_medians", {
+        role_filter: formData.role,
+        industry_filter: industry,
+      });
+
+      const result = Array.isArray(medianData) ? medianData[0] : medianData;
+      const liveMedian = result?.local_median || parseInt(formData.salary_amount);
 
       // Save the exact submission stats before transitioning the UI
       setSubmittedData({
         role: formData.role,
         salary: parseInt(formData.salary_amount),
-        median: activeMedian,
+        median: liveMedian,
       });
       
       setStatus("success");
@@ -67,7 +92,7 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
     let percentage = 0;
 
     // Only do the math if both salaries are in PKR
-    if (formData.currency === "PKR") {
+    if (formData.currency === "PKR" && submittedData.median > 0) {
       diff = submittedData.salary - submittedData.median;
       percentage = Math.round((diff / submittedData.median) * 100);
     } else {
@@ -169,24 +194,22 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className={labelClass}>Role</label>
-            <select required className={inputClass} value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
-              <option value="Backend Engineer">Backend Engineer</option>
-              <option value="Frontend Engineer">Frontend Engineer</option>
-              <option value="Fullstack Engineer">Fullstack Engineer</option>
-              <option value="Mobile Engineer">Mobile Engineer</option>
-              <option value="DevOps/SRE">DevOps / SRE</option>
-              <option value="Data Scientist/Engineer">Data Scientist / Eng</option>
-              <option value="QA Engineer">QA Engineer</option>
-              <option value="Product Manager">Product Manager</option>
-              <option value="UI/UX Designer">UI/UX Designer</option>
-              <option value="System Administrator">System Administrator</option>
-              <option value="IT Support">IT Support</option>
-              <option value="Network Engineer">Network Engineer</option>
-            </select>
+            <select
+                required
+                className={inputClass}
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              >
+                {rolesList.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
           </div>
           <div>
             <label className={labelClass}>Years of Exp</label>
-            <input type="number" required step="0.1" min="0" max="50" placeholder="e.g. 2.5" className={inputClass} value={formData.yoe} onChange={(e) => setFormData({ ...formData, yoe: e.target.value })} />
+            <input type="number" required step="0.1" min="0" max="40" placeholder="e.g. 2.5" className={inputClass} value={formData.yoe} onChange={(e) => setFormData({ ...formData, yoe: e.target.value })} />
           </div>
         </div>
 
@@ -199,12 +222,9 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
           <div>
             <label className={labelClass}>Currency</label>
             <select className={inputClass} value={formData.currency} onChange={(e) => setFormData({ ...formData, currency: e.target.value })}>
-              <option value="PKR">PKR</option>
-              <option value="USD">USD</option>
-              <option value="CAD">CAD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-              <option value="AUD">AUD</option>
+              {VALID_CURRENCIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
             </select>
           </div>
           <div>
@@ -218,13 +238,9 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
           <div className="col-span-2 sm:col-span-1">
             <label className={labelClass}>City</label>
             <select className={inputClass} value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })}>
-              <option value="Lahore">Lahore</option>
-              <option value="Karachi">Karachi</option>
-              <option value="Islamabad">Islamabad</option>
-              <option value="Rawalpindi">Rawalpindi</option>
-              <option value="Faisalabad">Faisalabad</option>
-              <option value="Peshawar">Peshawar</option>
-              <option value="Remote/Global">Remote / Global</option>
+              {VALID_CITIES.map((city) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -233,9 +249,20 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1">
             <label className={labelClass}>Company (Optional)</label>
-            <input type="text" maxLength={50} placeholder="Devsinc / Tkxel" className={inputClass} value={formData.company_name} onChange={(e) => setFormData({ ...formData, company_name: e.target.value })} />
+            <input
+              type="text"
+              maxLength={50}
+              placeholder={isBiz ? "Unilever / Daraz / HBL" : "Devsinc / Tkxel"}
+              className={inputClass}
+              value={formData.company_name}
+              onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+            />
             <p className="mt-1.5 text-xs text-slate-400 font-poppins text-left pl-1">
-              Join devs from <span className="font-medium text-slate-500">Systems Limited, TCP, Axiom</span> who just dropped their receipts.
+              {isBiz ? (
+                <>Help bring transparency to <span className="font-medium text-slate-500">corporate, banking &amp; SME</span> pay across Pakistan.</>
+              ) : (
+                <>Join devs from <span className="font-medium text-slate-500">Systems Limited, TCP, Axiom</span> who just dropped their receipts.</>
+              )}
             </p>
           </div>
           <button type="submit" disabled={loading} className="w-full rounded-full bg-emerald-600 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 sm:w-auto">
@@ -243,7 +270,7 @@ export default function SalaryForm({ currentMedians = {} }: { currentMedians?: R
           </button>
         </div>
 
-        {status === "error" && <p className="text-center text-xs font-medium text-red-600">Something went wrong. Try again.</p>}
+        {status === "error" && <p className="text-center text-xs font-medium text-red-600">{errorMsg}</p>}
       </form>
     </div>
   );
