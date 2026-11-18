@@ -7,8 +7,8 @@ export default function CompanySpot({
 }) {
   const isBiz = industry === "Business";
   const spottedCompanies = isBiz
-    ? ["waiting on big Corpos.."]
-    : ["Systems Limited", "Axiom", "TCP"];
+    ? ["PwC", "Emumba"]
+    : ["Motive", "Tajir", "NetSol"];
 
   return (
     <div className="mt-4 flex items-center justify-center">

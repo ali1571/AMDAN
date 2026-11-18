@@ -11,6 +11,9 @@ export const VALID_ROLES = [
   "System Administrator", // New
   "IT Support",           // New
   "Network Engineer",     // New
+  "Blockchain Engineer",
+  "Game Developer",
+  "MarTech Engineer",
 ] as const;
 
 
