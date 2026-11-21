@@ -4,7 +4,7 @@ export default function Banner() {
       <span className="font-semibold text-emerald-400">Hey!</span> Just a weekend MVP, not a fortified SaaS. Devved by{" "}
       <span className="font-semibold text-white">Ali,</span>  connect on{" "}
       <a
-        href="https://x.com/QWERTS1571"
+        href="https://dub.sh/GolOWId"
         target="_blank"
         rel="noopener noreferrer"
         className="font-medium text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
@@ -13,7 +13,7 @@ export default function Banner() {
       </a>{" "}
       or{" "}
       <a
-        href="https://www.linkedin.com/in/ali-abid-9667483b3/"
+        href="https://dub.sh/LRMWDX4"
         target="_blank"
         rel="noopener noreferrer"
         className="font-medium text-emerald-400 underline underline-offset-2 hover:text-emerald-300"

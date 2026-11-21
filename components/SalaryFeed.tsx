@@ -23,6 +23,7 @@ export default function SalaryFeed({
         .from("salary_records")
         .select("*")
         .eq("industry", industry)
+        .eq("quality_status", "passed")
         .order("created_at", { ascending: false })
         .limit(50);
 

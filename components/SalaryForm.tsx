@@ -45,6 +45,8 @@ export default function SalaryForm({
 
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const [reviewFlags, setReviewFlags] = useState<string[]>([]);
+
   const [formData, setFormData] = useState({
     role: rolesList[0] as string,
     yoe: "",
@@ -81,21 +83,31 @@ export default function SalaryForm({
       if (res.error === "chill") {
         setErrorMsg("Whoa, slow down. Wait 5 minutes before dropping another receipt.");
       } else {
-        setErrorMsg(`Error: ${res.error}`);
+        setErrorMsg("Error: " + res.error);
       }
       setStatus("error");
     } else {
+      // Save any flags returned by the server
+      if (res.flags && res.flags.length > 0) {
+        setReviewFlags(res.flags);
+      } else {
+        setReviewFlags([]);
+      }
+
       const { data: medianData } = await supabase.rpc("get_market_medians", {
         role_filter: formData.role,
         industry_filter: industry,
       });
 
       const result = Array.isArray(medianData) ? medianData[0] : medianData;
-      const liveMedian = result?.local_median || parseInt(formData.salary_amount);
+      const liveMedian =
+        result?.local_median ||
+        currentMedians[formData.role] ||
+        parseInt(formData.salary_amount, 10);
 
       const receiptPayload: SavedReceipt = {
         role: formData.role,
-        salary: parseInt(formData.salary_amount),
+        salary: parseInt(formData.salary_amount, 10),
         currency: formData.currency,
         median: liveMedian,
         city: formData.city,
@@ -103,12 +115,15 @@ export default function SalaryForm({
       };
 
       setSubmittedData(receiptPayload);
-      setSavedReceipt(receiptPayload);
 
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(receiptPayload));
-      } catch {
-        // Ignore storage quota errors
+      // Only save to localStorage banner if it passed immediately
+      if (res.qualityStatus !== "flagged") {
+        setSavedReceipt(receiptPayload);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(receiptPayload));
+        } catch {
+          // Ignore storage quota errors
+        }
       }
 
       setStatus("success");
@@ -172,6 +187,26 @@ export default function SalaryForm({
 
   // 1. THE REALITY CHECK SUCCESS STATE
   if (status === "success" && submittedData) {
+
+    const isUnderReview = reviewFlags.length > 0;
+
+    let reviewMessage =
+      "Your submission was held for a quick quality review before appearing in the public ledger.";
+
+    for (let i = 0; i < reviewFlags.length; i++) {
+      if (reviewFlags[i] === "possible_duplicate") {
+        reviewMessage =
+          "Possible Duplicate entry detected, submitted but not currently displayed in the ledger";
+      } else if (reviewFlags[i] === "possible_resubmission") {
+        reviewMessage =
+          "Recent resubmission detected, submitted but not currently displayed in the ledger";
+      } else if (reviewFlags[i] === "high_ip_velocity") {
+        reviewMessage =
+          "Multiple submissions detected from your network today, held for manual check.";
+      }
+    }
+
+
     let diff = 0;
     let percentage = 0;
 
@@ -212,6 +247,14 @@ export default function SalaryForm({
 
     return (
       <div className="mx-auto max-w-lg animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {isUnderReview && (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3.5 text-left text-xs text-amber-900 shadow-sm">
+            <p className="font-semibold uppercase tracking-wide text-amber-800">
+              Submitted but under review
+            </p>
+            <p className="mt-1 leading-relaxed text-amber-700">{reviewMessage}</p>
+          </div>
+        )}
         <div
           ref={cardRef}
           className={`relative overflow-hidden rounded-3xl border p-8 text-center shadow-2xl backdrop-blur-xl ${
@@ -277,10 +320,12 @@ export default function SalaryForm({
           >
             Close &amp; View Ledger
           </button>
-          <p className="mt-4 text-center text-xs text-slate-500">
+          
+        </div>
+        <p className="mt-4 text-center text-xs text-slate-500">
             Built solo by <span className="font-semibold text-slate-700">Ali</span> — follow data breakdowns on{" "}
             <a
-              href="https://x.com/QWERTS1571"
+              href="https://dub.sh/GolOWId"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-emerald-600 hover:underline"
@@ -289,7 +334,7 @@ export default function SalaryForm({
             </a>{" "}
             or{" "}
             <a
-              href="https://linkedin.com/in/ali-abid"
+              href="https://dub.sh/LRMWDX4"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-emerald-600 hover:underline"
@@ -298,7 +343,6 @@ export default function SalaryForm({
             </a>
             .
           </p>
-        </div>
       </div>
     );
   }
@@ -424,6 +468,9 @@ export default function SalaryForm({
                 value={formData.salary_amount}
                 onChange={(e) => setFormData({ ...formData, salary_amount: e.target.value })}
               />
+              <p className="mt-1 pl-2 text-[11px] leading-snug text-slate-400">
+                Enter Monthly Gross Salary.
+              </p>
             </div>
             <div>
               <label className={labelClass}>Currency</label>

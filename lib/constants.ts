@@ -4,10 +4,12 @@ export const VALID_ROLES = [
   "Fullstack Engineer",
   "Mobile Engineer",
   "Product Manager",
+  "AI engineer",
   "UI/UX Designer",
   "Data Scientist/Engineer",
   "DevOps/SRE",
   "QA Engineer",
+  "Embedded Engineer",
   "System Administrator", // New
   "IT Support",           // New
   "Network Engineer",     // New
@@ -31,6 +33,7 @@ export const BIZ_ROLES = [
   "Digital Marketing",
   "Brand Manager",
   "Business Analyst",
+  "SQ",
   "Customer Support",
   "Virtual Assistant",
 ] as const;

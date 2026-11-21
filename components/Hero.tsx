@@ -13,15 +13,15 @@ export default function Hero({
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-100/50 via-slate-50/10 to-transparent blur-2xl"></div>
 
       <h1 className="font-oswald text-5xl font-medium uppercase tracking-tight text-slate-900 sm:text-6xl">
-        Stop getting{" "}
+        Know what your industry{" "}
         <span className="font-playfair italic text-emerald-600 lowercase tracking-normal">
-          lowballed.
+          actually pays
         </span>
       </h1>
       <p className="mx-auto mt-6 max-w-xl text-lg text-slate-600 leading-relaxed font-light">
         {isBiz
-          ? "Anonymous corporate & business salary drops in Pakistan. Share your receipt, check the market, and get what you're actually owed."
-          : "Anonymous tech salary drops in Pakistan. Share your receipt, check the market, and get what you're actually owed."}
+          ? "Anonymous corporate salary data from Pakistan. Share your receipt, explore what others earn, and understand your market value."
+          : "Anonymous tech salary data from Pakistan. Share your receipt, explore what others earn, and understand your market value."}
       </p>
 
       <SubmissionCounter industry={industry} />
